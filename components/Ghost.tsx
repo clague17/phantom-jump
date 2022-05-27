@@ -22,7 +22,7 @@ const Ghost: React.FC<GhostProps> = ({ body, pose }) => {
     extrapolate: "clamp",
   });
 
-  let image = Images["bird" + pose];
+  let image = Images["ghost" + pose];
   return (
     <Animated.Image
       style={{

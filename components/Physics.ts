@@ -102,7 +102,7 @@ export const addPipesAtLocation = (x, world, entities) => {
 const Physics = (entities, { touches, time, dispatch }) => {
   let engine = entities.physics.engine;
   let world = entities.physics.world;
-  let bird = entities.bird.body;
+  let ghost = entities.ghost.body;
 
   let hadTouches = false;
   touches
@@ -125,8 +125,8 @@ const Physics = (entities, { touches, time, dispatch }) => {
         }
 
         hadTouches = true;
-        Matter.Body.setVelocity(bird, {
-          x: bird.velocity.x,
+        Matter.Body.setVelocity(ghost, {
+          x: ghost.velocity.x,
           y: -10,
         });
       }
@@ -139,7 +139,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
       Matter.Body.translate(entities[key].body, { x: -2, y: 0 });
 
       if (key.indexOf("Top") !== -1 && parseInt(key.replace("pipe", "")) % 2 === 0) {
-        if (entities[key].body.position.x <= bird.position.x && !entities[key].scored) {
+        if (entities[key].body.position.x <= ghost.position.x && !entities[key].scored) {
           entities[key].scored = true;
           dispatch({ type: "score" });
         }
@@ -176,7 +176,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
     if (pose > 3) {
       pose = 1;
     }
-    entities.bird.pose = pose;
+    entities.ghost.pose = pose;
   }
 
   return entities;

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import Matter from "matter-js";
+import Matter, { Engine, World } from "matter-js";
 import { GameEngine } from "react-native-game-engine";
 import Ghost from "./components/Ghost";
 import Floor from "./components/Floor";
@@ -17,50 +17,78 @@ import Physics, { resetPipes } from "./components/Physics";
 import { Constants } from "./util/utils";
 import Images from "./assets/Images";
 
-setupWorld = () => {
-  let engine = Matter.Engine.create({ enableSleeping: false });
-  let world = engine.world;
-  engine.gravity.y = 0.0;
-
-  let ghost = Matter.Bodies.rectangle(
-    Constants.MAX_WIDTH / 2,
-    Constants.MAX_HEIGHT / 2,
-    Constants.GHOST_WIDTH,
-    Constants.GHOST_HEIGHT
-  );
-
-  let floor1 = Matter.Bodies.rectangle(
-    Constants.MAX_WIDTH / 2,
-    Constants.MAX_HEIGHT - 25,
-    Constants.MAX_WIDTH + 4,
-    50,
-    { isStatic: true }
-  );
-
-  let floor2 = Matter.Bodies.rectangle(
-    Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
-    Constants.MAX_HEIGHT - 25,
-    Constants.MAX_WIDTH + 4,
-    50,
-    { isStatic: true }
-  );
-
-  Matter.World.add(world, [ghost, floor1, floor2]);
-  Matter.Events.on(engine, "collisionStart", (event) => {
-    var pairs = event.pairs;
-
-    gameEngine.dispatch({ type: "game-over" });
-  });
-
-  return {
-    physics: { engine: engine, world: world },
-    floor1: { body: floor1, renderer: Floor },
-    floor2: { body: floor2, renderer: Floor },
-    ghost: { body: ghost, pose: 1, renderer: Ghost },
-  };
-};
-
 export default function App() {
+  const [isGameRunning, setIsGameRunning] = useState(false);
+  const [score, setScore] = useState(0);
+
+  const gameEngine = useRef(null);
+
+  // useEffect(() => {
+  //   entities = setupWorld();
+  // }, []);
+
+  const onEvent = (e) => {
+    if (e.type === "game-over") {
+      //Alert.alert("Game Over");
+      setIsGameRunning(false);
+    } else if (e.type === "score") {
+      setScore(score + 1);
+    }
+  };
+
+  const reset = () => {
+    console.log("now we're resetting");
+    resetPipes();
+    gameEngine.current.swap(this.setupWorld());
+    setIsGameRunning(true);
+    setScore(0);
+  };
+
+  const setupWorld = () => {
+    gameEngine = Matter.Engine.create();
+    let world: World = engine.world;
+    engine.gravity.y = 0.0;
+
+    let ghost = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH / 2,
+      Constants.MAX_HEIGHT / 2,
+      Constants.GHOST_WIDTH,
+      Constants.GHOST_HEIGHT
+    );
+
+    let floor1 = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH / 2,
+      Constants.MAX_HEIGHT - 25,
+      Constants.MAX_WIDTH + 4,
+      50,
+      { isStatic: true }
+    );
+
+    let floor2 = Matter.Bodies.rectangle(
+      Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
+      Constants.MAX_HEIGHT - 25,
+      Constants.MAX_WIDTH + 4,
+      50,
+      { isStatic: true }
+    );
+
+    Matter.World.add(world, [ghost, floor1, floor2]);
+    Matter.Events.on(engine, "collisionStart", (event) => {
+      let pairs = event.pairs;
+
+      gameEngine.current.dispatch({ type: "game-over" });
+    });
+
+    return {
+      physics: { engine: engine, world: world },
+      floor1: { body: floor1, renderer: Floor },
+      floor2: { body: floor2, renderer: Floor },
+      ghost: { body: ghost, pose: 1, renderer: Ghost },
+    };
+  };
+
+  let entities = setupWorld();
+
   return (
     <View style={styles.container}>
       <Image
@@ -70,19 +98,19 @@ export default function App() {
       />
       <GameEngine
         ref={(ref) => {
-          this.gameEngine = ref;
+          gameEngine = ref;
         }}
         style={styles.gameContainer}
         systems={[Physics]}
-        running={this.state.running}
-        onEvent={this.onEvent}
-        entities={this.entities}
+        running={isGameRunning}
+        onEvent={onEvent}
+        entities={entities}
       >
         <StatusBar hidden={true} />
       </GameEngine>
-      <Text style={styles.score}>{this.state.score}</Text>
-      {!this.state.running && (
-        <TouchableOpacity style={styles.fullScreenButton} onPress={this.reset}>
+      <Text style={styles.score}>{score}</Text>
+      {!isGameRunning && (
+        <TouchableOpacity style={styles.fullScreenButton} onPress={() => reset}>
           <View style={styles.fullScreen}>
             <Text style={styles.gameOverText}>Game Over</Text>
             <Text style={styles.gameOverSubText}>Try Again</Text>
@@ -91,76 +119,6 @@ export default function App() {
       )}
     </View>
   );
-}
-
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      running: true,
-      score: 0,
-    };
-
-    this.gameEngine = null;
-
-    this.entities = this.setupWorld();
-  }
-
-  onEvent = (e) => {
-    if (e.type === "game-over") {
-      //Alert.alert("Game Over");
-      this.setState({
-        running: false,
-      });
-    } else if (e.type === "score") {
-      this.setState({
-        score: this.state.score + 1,
-      });
-    }
-  };
-
-  reset = () => {
-    resetPipes();
-    this.gameEngine.swap(this.setupWorld());
-    this.setState({
-      running: true,
-      score: 0,
-    });
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={Images.background}
-          style={styles.backgroundImage}
-          resizeMode="stretch"
-        />
-        <GameEngine
-          ref={(ref) => {
-            this.gameEngine = ref;
-          }}
-          style={styles.gameContainer}
-          systems={[Physics]}
-          running={this.state.running}
-          onEvent={this.onEvent}
-          entities={this.entities}
-        >
-          <StatusBar hidden={true} />
-        </GameEngine>
-        <Text style={styles.score}>{this.state.score}</Text>
-        {!this.state.running && (
-          <TouchableOpacity style={styles.fullScreenButton} onPress={this.reset}>
-            <View style={styles.fullScreen}>
-              <Text style={styles.gameOverText}>Game Over</Text>
-              <Text style={styles.gameOverSubText}>Try Again</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  }
 }
 
 const styles = StyleSheet.create({
@@ -187,12 +145,10 @@ const styles = StyleSheet.create({
   gameOverText: {
     color: "white",
     fontSize: 48,
-    fontFamily: "04b_19",
   },
   gameOverSubText: {
     color: "white",
     fontSize: 24,
-    fontFamily: "04b_19",
   },
   fullScreen: {
     position: "absolute",
