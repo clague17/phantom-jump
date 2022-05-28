@@ -18,6 +18,7 @@ import { Constants } from "./util/utils";
 import Images from "./assets/Images";
 
 export default function App() {
+  console.log("render 1");
   const [isGameRunning, setIsGameRunning] = useState(true);
   const [score, setScore] = useState(0);
 
@@ -61,9 +62,8 @@ export default function App() {
   const reset = () => {
     console.log("now we're resetting");
     resetPipes();
-    gameEngine.current.swap(this.setupWorld());
-    setIsGameRunning(true);
     setScore(0);
+    setIsGameRunning(true);
   };
 
   useEffect(() => {
@@ -94,11 +94,11 @@ export default function App() {
           ghost: { body: ghost, pose: 1, renderer: Ghost },
         }}
       >
-        <StatusBar hidden={true} />
+        <StatusBar hidden={false} />
       </GameEngine>
       <Text style={styles.score}>{score}</Text>
       {!isGameRunning && (
-        <TouchableOpacity style={styles.fullScreenButton} onPress={() => reset}>
+        <TouchableOpacity style={styles.fullScreenButton} onPress={reset}>
           <View style={styles.fullScreen}>
             <Text style={styles.gameOverText}>Game Over</Text>
             <Text style={styles.gameOverSubText}>Try Again</Text>

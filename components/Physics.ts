@@ -133,9 +133,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
     });
 
   Matter.Engine.update(engine, time.delta);
-  Matter.Events.on(entities, "collisionStart", (event) => {
-    let pairs = event.pairs;
-
+  Matter.Events.on(engine, "collisionStart", (event) => {
     dispatch({ type: "game-over" });
   });
 
