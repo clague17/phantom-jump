@@ -18,11 +18,33 @@ import { Constants } from "./util/utils";
 import Images from "./assets/Images";
 
 export default function App() {
-  const [isGameRunning, setIsGameRunning] = useState(false);
+  const [isGameRunning, setIsGameRunning] = useState(true);
   const [score, setScore] = useState(0);
 
-  const gameEngine = useRef(null);
+  const gameEngine = useRef(Matter.Engine.create());
 
+  let ghost = Matter.Bodies.rectangle(
+    Constants.MAX_WIDTH / 2,
+    Constants.MAX_HEIGHT / 2,
+    Constants.GHOST_WIDTH,
+    Constants.GHOST_HEIGHT
+  );
+
+  let floor1 = Matter.Bodies.rectangle(
+    Constants.MAX_WIDTH / 2,
+    Constants.MAX_HEIGHT - 25,
+    Constants.MAX_WIDTH + 4,
+    50,
+    { isStatic: true }
+  );
+
+  let floor2 = Matter.Bodies.rectangle(
+    Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
+    Constants.MAX_HEIGHT - 25,
+    Constants.MAX_WIDTH + 4,
+    50,
+    { isStatic: true }
+  );
   // useEffect(() => {
   //   entities = setupWorld();
   // }, []);
@@ -44,50 +66,14 @@ export default function App() {
     setScore(0);
   };
 
-  const setupWorld = () => {
-    gameEngine = Matter.Engine.create();
-    let world: World = engine.world;
-    engine.gravity.y = 0.0;
-
-    let ghost = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH / 2,
-      Constants.MAX_HEIGHT / 2,
-      Constants.GHOST_WIDTH,
-      Constants.GHOST_HEIGHT
-    );
-
-    let floor1 = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH / 2,
-      Constants.MAX_HEIGHT - 25,
-      Constants.MAX_WIDTH + 4,
-      50,
-      { isStatic: true }
-    );
-
-    let floor2 = Matter.Bodies.rectangle(
-      Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
-      Constants.MAX_HEIGHT - 25,
-      Constants.MAX_WIDTH + 4,
-      50,
-      { isStatic: true }
-    );
+  useEffect(() => {
+    let world: World = gameEngine.current.world;
+    gameEngine.current.gravity.y = 0.0;
 
     Matter.World.add(world, [ghost, floor1, floor2]);
-    Matter.Events.on(engine, "collisionStart", (event) => {
-      let pairs = event.pairs;
 
-      gameEngine.current.dispatch({ type: "game-over" });
-    });
-
-    return {
-      physics: { engine: engine, world: world },
-      floor1: { body: floor1, renderer: Floor },
-      floor2: { body: floor2, renderer: Floor },
-      ghost: { body: ghost, pose: 1, renderer: Ghost },
-    };
-  };
-
-  let entities = setupWorld();
+    Matter.Runner.run(gameEngine.current);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -97,14 +83,16 @@ export default function App() {
         resizeMode="stretch"
       />
       <GameEngine
-        ref={(ref) => {
-          gameEngine = ref;
-        }}
         style={styles.gameContainer}
         systems={[Physics]}
         running={isGameRunning}
         onEvent={onEvent}
-        entities={entities}
+        entities={{
+          physics: { engine: gameEngine.current, world: gameEngine.current.world },
+          floor1: { body: floor1, renderer: Floor },
+          floor2: { body: floor2, renderer: Floor },
+          ghost: { body: ghost, pose: 1, renderer: Ghost },
+        }}
       >
         <StatusBar hidden={true} />
       </GameEngine>
@@ -170,7 +158,6 @@ const styles = StyleSheet.create({
     textShadowColor: "#444444",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 2,
-    fontFamily: "04b_19",
   },
   fullScreenButton: {
     position: "absolute",

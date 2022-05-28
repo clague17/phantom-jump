@@ -133,6 +133,11 @@ const Physics = (entities, { touches, time, dispatch }) => {
     });
 
   Matter.Engine.update(engine, time.delta);
+  Matter.Events.on(entities, "collisionStart", (event) => {
+    let pairs = event.pairs;
+
+    dispatch({ type: "game-over" });
+  });
 
   Object.keys(entities).forEach((key) => {
     if (key.indexOf("pipe") === 0 && entities.hasOwnProperty(key)) {
