@@ -17,9 +17,10 @@ export default function Game() {
   let world: World = engine.world;
   engine.gravity.y = 0.0;
 
-  let ghost: Matter.Body = Matter.Bodies.circle(
+  let ghost: Matter.Body = Matter.Bodies.rectangle(
     Constants.MAX_WIDTH / 2,
     Constants.MAX_HEIGHT / 2,
+    Constants.GHOST_WIDTH,
     Constants.GHOST_HEIGHT
   );
 

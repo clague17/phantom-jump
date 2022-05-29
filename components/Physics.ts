@@ -127,7 +127,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
         hadTouches = true;
         Matter.Body.setVelocity(ghost, {
           x: ghost.velocity.x,
-          y: -10,
+          y: -22,
         });
       }
     });
