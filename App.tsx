@@ -9,72 +9,16 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import Matter, { Engine, World } from "matter-js";
+import Matter, { World } from "matter-js";
 import { GameEngine } from "react-native-game-engine";
 import Ghost from "./components/Ghost";
 import Floor from "./components/Floor";
 import Physics, { resetPipes } from "./components/Physics";
 import { Constants } from "./util/utils";
 import Images from "./assets/Images";
+import Game from "./Game";
 
 export default function App() {
-  console.log("render 1");
-  const [isGameRunning, setIsGameRunning] = useState(true);
-  const [score, setScore] = useState(0);
-
-  const gameEngine = useRef(Matter.Engine.create());
-
-  let ghost = Matter.Bodies.rectangle(
-    Constants.MAX_WIDTH / 2,
-    Constants.MAX_HEIGHT / 2,
-    Constants.GHOST_WIDTH,
-    Constants.GHOST_HEIGHT
-  );
-
-  let floor1 = Matter.Bodies.rectangle(
-    Constants.MAX_WIDTH / 2,
-    Constants.MAX_HEIGHT - 25,
-    Constants.MAX_WIDTH + 4,
-    50,
-    { isStatic: true }
-  );
-
-  let floor2 = Matter.Bodies.rectangle(
-    Constants.MAX_WIDTH + Constants.MAX_WIDTH / 2,
-    Constants.MAX_HEIGHT - 25,
-    Constants.MAX_WIDTH + 4,
-    50,
-    { isStatic: true }
-  );
-  // useEffect(() => {
-  //   entities = setupWorld();
-  // }, []);
-
-  const onEvent = (e) => {
-    if (e.type === "game-over") {
-      //Alert.alert("Game Over");
-      setIsGameRunning(false);
-    } else if (e.type === "score") {
-      setScore(score + 1);
-    }
-  };
-
-  const reset = () => {
-    console.log("now we're resetting");
-    resetPipes();
-    setScore(0);
-    setIsGameRunning(true);
-  };
-
-  useEffect(() => {
-    let world: World = gameEngine.current.world;
-    gameEngine.current.gravity.y = 0.0;
-
-    Matter.World.add(world, [ghost, floor1, floor2]);
-
-    Matter.Runner.run(gameEngine.current);
-  }, []);
-
   return (
     <View style={styles.container}>
       <Image
@@ -82,29 +26,7 @@ export default function App() {
         style={styles.backgroundImage}
         resizeMode="stretch"
       />
-      <GameEngine
-        style={styles.gameContainer}
-        systems={[Physics]}
-        running={isGameRunning}
-        onEvent={onEvent}
-        entities={{
-          physics: { engine: gameEngine.current, world: gameEngine.current.world },
-          floor1: { body: floor1, renderer: Floor },
-          floor2: { body: floor2, renderer: Floor },
-          ghost: { body: ghost, pose: 1, renderer: Ghost },
-        }}
-      >
-        <StatusBar hidden={false} />
-      </GameEngine>
-      <Text style={styles.score}>{score}</Text>
-      {!isGameRunning && (
-        <TouchableOpacity style={styles.fullScreenButton} onPress={reset}>
-          <View style={styles.fullScreen}>
-            <Text style={styles.gameOverText}>Game Over</Text>
-            <Text style={styles.gameOverSubText}>Try Again</Text>
-          </View>
-        </TouchableOpacity>
-      )}
+      <Game />
     </View>
   );
 }

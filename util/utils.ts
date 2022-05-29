@@ -5,8 +5,8 @@ export const Constants = {
   MAX_HEIGHT: Dimensions.get("screen").height,
   GAP_SIZE: 320,
   PIPE_WIDTH: 100,
-  GHOST_WIDTH: 50,
-  GHOST_HEIGHT: 41,
+  GHOST_WIDTH: 75,
+  GHOST_HEIGHT: 62,
 };
 
 export function getDimensions(body: any): Array<number> {

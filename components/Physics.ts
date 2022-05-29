@@ -44,7 +44,7 @@ export const addPipesAtLocation = (x, world, entities) => {
     { isStatic: true }
   );
 
-  let pipe1 = Matter.Bodies.rectangle(
+  let pipe1: Matter.Body = Matter.Bodies.rectangle(
     x,
     pipe1Height / 2,
     Constants.PIPE_WIDTH,
@@ -54,7 +54,7 @@ export const addPipesAtLocation = (x, world, entities) => {
 
   pipe2Height = pipe2Height - pipeTopHeight;
 
-  let pipe2Top = Matter.Bodies.rectangle(
+  let pipe2Top: Matter.Body = Matter.Bodies.rectangle(
     x,
     Constants.MAX_HEIGHT - 50 - pipe2Height - pipeTopHeight / 2,
     pipeTopWidth,
@@ -62,7 +62,7 @@ export const addPipesAtLocation = (x, world, entities) => {
     { isStatic: true }
   );
 
-  let pipe2 = Matter.Bodies.rectangle(
+  let pipe2: Matter.Body = Matter.Bodies.rectangle(
     x,
     Constants.MAX_HEIGHT - 50 - pipe2Height / 2,
     Constants.PIPE_WIDTH,
@@ -100,9 +100,9 @@ export const addPipesAtLocation = (x, world, entities) => {
 };
 
 const Physics = (entities, { touches, time, dispatch }) => {
-  let engine = entities.physics.engine;
-  let world = entities.physics.world;
-  let ghost = entities.ghost.body;
+  let engine = entities.physics?.engine;
+  let world = entities.physics?.world;
+  let ghost = entities.ghost?.body;
 
   let hadTouches = false;
   touches
@@ -129,6 +129,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
           x: ghost.velocity.x,
           y: -10,
         });
+        entities.ghost.pose = 2;
       }
     });
 
