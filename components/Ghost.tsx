@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import { View, Image, Animated } from "react-native";
-import Images from "../assets/Images";
+import React from "react";
+import { Animated } from "react-native";
+import { Images, Coins } from "../assets/Images";
 
 interface GhostProps {
   body: any;
@@ -23,19 +23,29 @@ const Ghost: React.FC<GhostProps> = ({ body, pose }) => {
   });
 
   let image = Images["phantom" + pose];
+  let coin = Coins.samo;
   return (
-    <Animated.Image
-      style={{
-        position: "absolute",
-        left: x,
-        top: y,
-        width: width,
-        height: height,
-        transform: [{ rotate: rotation }],
-      }}
-      resizeMode="stretch"
-      source={image}
-    />
+    <>
+      <Animated.Image
+        style={{
+          position: "absolute",
+          left: x,
+          top: y,
+          width: width,
+          height: height,
+          transform: [{ rotate: rotation }],
+        }}
+        resizeMode="stretch"
+        source={image}
+      />
+      {/* <Animated.View
+        style={{
+          opacity: this.opacityAnimatedValue,
+          transform: [{ translateY: this.translateAnimatedValue }],
+        }}
+      > */}
+      {/* </Animated.View> */}
+    </>
   );
 };
 

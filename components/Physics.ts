@@ -1,4 +1,4 @@
-import Matter from "matter-js";
+import Matter, { Bodies } from "matter-js";
 import { Constants } from "../util/utils";
 import Pipe from "./Pipe";
 import PipeTop from "./PipeTop";
@@ -129,12 +129,12 @@ const Physics = (entities, { touches, time, dispatch }) => {
           x: ghost.velocity.x,
           y: -10,
         });
-        entities.ghost.pose = 2;
       }
     });
 
   Matter.Engine.update(engine, time.delta);
   Matter.Events.on(engine, "collisionStart", (event) => {
+    entities.ghost.pose = 3;
     dispatch({ type: "game-over" });
   });
 
@@ -174,14 +174,14 @@ const Physics = (entities, { touches, time, dispatch }) => {
     }
   });
 
-  tick += 1;
-  if (tick % 5 === 0) {
-    pose = pose + 1;
-    if (pose > 3) {
-      pose = 1;
-    }
-    entities.ghost.pose = pose;
-  }
+  // tick += 1;
+  // if (tick % 8 === 0) {
+  //   pose = pose + 1;
+  //   if (pose > 2) {
+  //     pose = 1;
+  //   }
+  //   entities.ghost.pose = pose;
+  // }
 
   return entities;
 };

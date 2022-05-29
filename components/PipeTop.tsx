@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Image } from "react-native";
 import { getDimensions } from "../util/utils";
-import Images from "../assets/Images";
+import { Images } from "../assets/Images";
 
 interface PipeTopProps {
   body: any;

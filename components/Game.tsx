@@ -2,11 +2,11 @@ import React, { Component, useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import Matter, { World } from "matter-js";
 import { GameEngine } from "react-native-game-engine";
-import Ghost from "./components/Ghost";
-import Floor from "./components/Floor";
-import Physics, { resetPipes } from "./components/Physics";
-import { Constants } from "./util/utils";
-import Images from "./assets/Images";
+import Ghost from "./Ghost";
+import Floor from "./Floor";
+import Physics, { resetPipes } from "./Physics";
+import { Constants } from "../util/utils";
+import { Images } from "../assets/Images";
 
 export default function Game() {
   const [isGameRunning, setIsGameRunning] = useState(true);
@@ -17,10 +17,9 @@ export default function Game() {
   let world: World = engine.world;
   engine.gravity.y = 0.0;
 
-  let ghost: Matter.Body = Matter.Bodies.rectangle(
+  let ghost: Matter.Body = Matter.Bodies.circle(
     Constants.MAX_WIDTH / 2,
     Constants.MAX_HEIGHT / 2,
-    Constants.GHOST_WIDTH,
     Constants.GHOST_HEIGHT
   );
 
@@ -96,7 +95,7 @@ export default function Game() {
   };
 
   const reset = () => {
-    // @ts-ignore (we need this because the actual package doesn't have the typing necessary. This exists here: https://github.com/bberak/react-native-game-engine/blob/01d0827b5d5989cc559dec07d8fdad580bece494/src/GameEngine.js#L88)
+    // @ts-ignore (we need this because the actual package doesn't have the typing necessary. This fxn exists here: https://github.com/bberak/react-native-game-engine/blob/01d0827b5d5989cc559dec07d8fdad580bece494/src/GameEngine.js#L88)
     gameEngine.current.swap(setupWorld());
     resetPipes();
     setScore(0);
@@ -110,18 +109,16 @@ export default function Game() {
         style={styles.backgroundImage}
         resizeMode="stretch"
       />
-      {true && (
-        <GameEngine
-          ref={(ref) => {
-            gameEngine.current = ref;
-          }}
-          style={styles.gameContainer}
-          systems={[Physics]}
-          running={isGameRunning}
-          onEvent={onEvent}
-          entities={ogEntities}
-        />
-      )}
+      <GameEngine
+        ref={(ref) => {
+          gameEngine.current = ref;
+        }}
+        style={styles.gameContainer}
+        systems={[Physics]}
+        running={isGameRunning}
+        onEvent={onEvent}
+        entities={ogEntities}
+      />
       <Text style={styles.score}>{score}</Text>
       {!isGameRunning && (
         <TouchableOpacity style={styles.fullScreenButton} onPress={reset}>

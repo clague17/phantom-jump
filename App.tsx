@@ -1,22 +1,8 @@
-import React, { Component, useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Alert,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import Matter, { World } from "matter-js";
-import { GameEngine } from "react-native-game-engine";
-import Ghost from "./components/Ghost";
-import Floor from "./components/Floor";
-import Physics, { resetPipes } from "./components/Physics";
+import React from "react";
+import { StyleSheet, View, Image } from "react-native";
 import { Constants } from "./util/utils";
-import Images from "./assets/Images";
-import Game from "./Game";
+import { Images } from "./assets/Images";
+import Game from "./components/Game";
 
 export default function App() {
   return (
