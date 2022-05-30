@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import Matter, { World } from "matter-js";
 import { GameEngine } from "react-native-game-engine";
@@ -7,6 +7,7 @@ import Floor from "./Floor";
 import Physics, { resetPipes } from "./Physics";
 import { Constants } from "../util/utils";
 import { Images } from "../assets/Images";
+import GameOver from "./GameOver";
 
 export default function Game() {
   const [isGameRunning, setIsGameRunning] = useState(true);
@@ -121,14 +122,7 @@ export default function Game() {
         entities={ogEntities}
       />
       <Text style={styles.score}>{score}</Text>
-      {!isGameRunning && (
-        <TouchableOpacity style={styles.fullScreenButton} onPress={reset}>
-          <View style={styles.fullScreen}>
-            <Text style={styles.gameOverText}>Game Over</Text>
-            <Text style={styles.gameOverSubText}>Try Again</Text>
-          </View>
-        </TouchableOpacity>
-      )}
+      {!isGameRunning && <GameOver resetFunction={reset} score={score} />}
     </View>
   );
 }
