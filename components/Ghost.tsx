@@ -1,5 +1,5 @@
 import React from "react";
-import { Animated } from "react-native";
+import { Animated, YellowBox } from "react-native";
 import { Images, Coins } from "../assets/Images";
 
 interface GhostProps {
@@ -33,6 +33,7 @@ const Ghost: React.FC<GhostProps> = ({ body, pose }) => {
           top: y,
           width: width,
           height: height,
+          backgroundColor: "yellow",
           transform: [{ rotate: rotation }],
         }}
         resizeMode="stretch"

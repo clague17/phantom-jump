@@ -6,6 +6,7 @@ export const Images = {
   phantom1: require("./img/border-phantom.png"),
   phantom2: require("./img/phantom2.png"),
   phantom3: require("./img/phantom3.png"),
+  phantom: require("./img/phantom.svg"),
 };
 
 export const Coins = {
